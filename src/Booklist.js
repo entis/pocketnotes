@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import sendAsync from "./db/renderer";
+import sendAsync from "./renderer";
 
 function Book(props) {
    let url = "/book/" + props.data.OID + "/";

@@ -2,7 +2,7 @@ const { ipcMain } = require("electron");
 const sqlite3 = require("sqlite3").verbose();
 
 const database = new sqlite3.Database(
-   "./public/books.db",
+   "G:/system/config/books.db",
    sqlite3.OPEN_READONLY,
    (err) => {
       if (err) console.error("Database opening error: ", err);
