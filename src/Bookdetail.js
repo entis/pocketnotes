@@ -30,7 +30,6 @@ class Bookdetail extends React.Component {
                         from
                               Items
                               inner join (
-                                 -- Vybere všechny objekty s citacemi
                                  select
                                     ItemID,
                                     Val as Highlight
@@ -46,10 +45,6 @@ class Bookdetail extends React.Component {
 
       sendAsync(highlight_sql)
          .then((rows) => {
-            /*  rows.forEach((element) => {
-            element.Text = element.Text.replace(/\u2029/g, "<br>");
-         }); */
-
             this.setState({
                highlights: rows,
             });
