@@ -1,70 +1,39 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import sendAsync from "./renderer";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { deleteBook } from './Utils.js'
 
 class Bookdetail extends React.Component {
    constructor(props) {
-      super(props);
+      super(props)
       this.state = {
          highlights: [],
          bookData: [],
-      };
+      }
    }
 
    fetchNotes() {
-      let bookId = this.props.match.params.id;
+      let bookId = this.props.match.params.id
 
-      let highlight_sql = `select json_extract(Highlight, '$.text') as Text
-         from
-            Books
-            inner join (
-                  select
-                     OID as BookID,
-                     Highlight
-                  from
-                     Items
-                     inner join (
-                        select
-                              ParentID,
-                              Highlight
-                        from
-                              Items
-                              inner join (
-                                 select
-                                    ItemID,
-                                    Val as Highlight
-                                 from
-                                    Tags
-                                 where
-                                    TagID = 104
-                                    and Val <> '{"text":"Bookmark"}'
-                              ) as Highlights on Highlights.ItemID = OID
-                     ) as Highlights on Highlights.ParentID = OID
-            ) as Highlights on BookID = OID
-            where OID = ${bookId};`;
-
-      sendAsync(highlight_sql)
+      fetch(`http://localhost:8000/book/${bookId}`)
+         .then(response => response.json())
          .then((rows) => {
+
             this.setState({
-               highlights: rows,
-            });
+               highlights: rows[0],
+               bookData: rows[1],
+               tags: rows[2],
+            })
          })
-         .then(() => sendAsync(`select *  from Books where OID = ${bookId}`))
-         .then((data) => {
-            this.setState({
-               bookData: data,
-            });
-         });
    }
 
    componentDidMount() {
-      this.fetchNotes();
+      this.fetchNotes()
    }
 
    render() {
-      let highlights = this.state.highlights;
-
-      let bookData = this.state.bookData[0] ? this.state.bookData[0] : {};
+      let highlights = this.state.highlights
+      let tags = this.state.highlights
+      let bookData = this.state.bookData[0] ? this.state.bookData[0] : {}
 
       return (
          <div className="container">
@@ -74,14 +43,15 @@ class Bookdetail extends React.Component {
             <p className="text-center">
                <Link to="/">Back</Link>
             </p>
-            <ul>
-               {highlights.map((note, i) => {
-                  return <p key={i}>{note.Text}</p>;
-               })}
-            </ul>
+            <p className="text-center">
+               <button onClick={function() { deleteBook(bookData.OID)}}>delete {bookData.OID}</button>
+            </p>
+            {highlights.map((note, i) => {
+               return <p key={i}>{note.Text}</p>
+            })}
          </div>
-      );
+      )
    }
 }
 
-export default Bookdetail;
+export default Bookdetail

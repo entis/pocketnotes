@@ -2,3 +2,6 @@ node_modules
 dist/
 build/
 *.db
+books.db
+books.db-shm
+books.db-wal

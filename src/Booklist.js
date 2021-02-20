@@ -1,10 +1,10 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import sendAsync from "./renderer";
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { deleteBook } from './Utils'
 
 function Book(props) {
-   let url = "/book/" + props.data.OID + "/";
-   let dateChanged = new Date(props.data.TimeAdd * 1000);
+   let url = '/book/' + props.data.OID + '/'
+   let dateChanged = new Date(props.data.TimeAdd * 1000)
 
    return (
       <li>
@@ -18,55 +18,56 @@ function Book(props) {
             <span className="subtitle">{props.data.Subtitle} </span>
          )}
          <small>{dateChanged.toLocaleDateString()} | {props.data.OID}</small>
+
+         <br/>
+         <button onClick={function() { deleteBook(props.data.OID)}}>delete</button>
       </li>
-   );
+   )
 }
 
 class Booklist extends React.Component {
    constructor(props) {
-      super(props);
+      super(props)
       this.state = {
          response: [],
-      };
+      }
    }
 
    fetchBooklist() {
-      let sql = `select *  from Books WHERE Books.OID IN (SELECT ParentID FROM Items)`;
-      sendAsync(sql)
+      fetch('http://localhost:8000/booklist/')
+         .then(response => response.json())
          .then((rows) => {
             rows.forEach((current_book) => {
-               let originalTitle = current_book.Title.split(":");
+               let originalTitle = current_book.Title.split(':')
 
-               current_book.Title = originalTitle.shift();
+               current_book.Title = originalTitle.shift()
 
                if (originalTitle[0]) {
-                  current_book.Subtitle = originalTitle.join(":").trim();
+                  current_book.Subtitle = originalTitle.join(':').trim()
                }
-            });
+            })
 
             this.setState({
                response: rows,
-            });
+            })
          })
-         .catch((err) => {
-            throw err;
-         });
    }
+
    componentDidMount() {
-      this.fetchBooklist();
+      this.fetchBooklist()
    }
 
    render() {
       let booklist = this.state.response.map((book, i) => (
-         <Book data={book} key={i}></Book>
-      ));
+         <Book data={book} key={i}/>
+      ))
 
       return (
          <div className="container">
             <ul>{booklist}</ul>
          </div>
-      );
+      )
    }
 }
 
-export default Booklist;
+export default Booklist

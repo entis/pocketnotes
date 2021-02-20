@@ -8,10 +8,10 @@ function App() {
    return (
       <div className="App">
          <Switch>
-            <Route path="/book/:id" component={Bookdetail}></Route>
+            <Route path="/book/:id" component={Bookdetail}/>
             <Route path="/">
                <h1>Books</h1>
-               <Booklist></Booklist>
+               <Booklist/>
             </Route>
          </Switch>
       </div>
